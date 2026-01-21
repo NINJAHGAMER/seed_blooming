@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Soul of the Soil | Mathrubhumi SEED</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-emerald: #062c1d;
+            --leaf-green: #2ecc71;
+            --earth-gold: #c5a059;
+            --mist-white: #f4f4f4;
+            --nav-bg: rgba(4, 26, 17, 0.95);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--deep-emerald);
+            color: var(--mist-white);
+            margin: 0;
+            line-height: 1.8;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--deep-emerald); }
+        ::-webkit-scrollbar-thumb { background: var(--earth-gold); border-radius: 10px; }
+
+        /* --- Navigation Bar --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--nav-bg);
+            backdrop-filter: blur(15px);
+            z-index: 2000;
+            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            transition: 0.4s ease-in-out;
+        }
+        .nav-logo {
+            font-family: 'Cinzel', serif;
+            color: var(--earth-gold);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: var(--mist-white);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: 0.4s;
+            opacity: 0.8;
+        }
+        .nav-links a:hover { color: var(--earth-gold); opacity: 1; }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 3000;
+            width: 25px;
+            height: 18px;
+            position: relative;
+        }
+        .hamburger span {
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--earth-gold);
+            transition: 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            border-radius: 2px;
+        }
+        .hamburger span:nth-child(1) { top: 0; }
+        .hamburger span:nth-child(2) { top: 8px; }
+        .hamburger span:nth-child(3) { top: 16px; }
+
+        .hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; transform: translateX(-10px); }
+        .hamburger.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+        /* --- Hero --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(6, 44, 29, 0.7), rgba(6, 44, 29, 0.9)), 
+                        url('https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1600&q=80');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            padding: 20px;
+        }
+        .hero h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            margin: 0;
+            letter-spacing: clamp(4px, 2vw, 10px);
+            color: var(--earth-gold);
+            text-transform: uppercase;
+            animation: fadeInDown 1.5s ease-out;
+        }
+        .hero p {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            letter-spacing: 4px;
+            margin-top: 15px;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease-out 0.5s forwards;
+        }
+
+        /* --- Layout --- */
+        .container { max-width: 1100px; margin: 0 auto; padding: 100px 20px; }
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 1s cubic-bezier(0.4, 0, 0.2, 1); margin-bottom: 120px; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        h2 { font-family: 'Cinzel', serif; font-size: clamp(1.8rem, 5vw, 2.5rem); color: var(--earth-gold); text-align: center; margin-bottom: 50px; }
+
+        /* --- Search Bar --- */
+        .search-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .tree-search {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: var(--mist-white);
+            font-family: 'Montserrat', sans-serif;
+            width: 100%;
+            max-width: 350px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .tree-search:focus { border-color: var(--earth-gold); box-shadow: 0 0 15px rgba(197, 160, 89, 0.2); }
+
+        /* --- Tree Story Grid --- */
+        .tree-story {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            justify-content: center;
+        }
+        .story-block {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(197, 160, 89, 0.15);
+            transition: 0.5s;
+            position: relative;
+            overflow: hidden;
+            min-height: 320px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .story-block:hover { border: 1px solid var(--earth-gold); transform: translateY(-8px); }
+        .tree-photo { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; margin-bottom: 15px; }
+        
+        .story-block h3 { margin: 5px 0; font-size: 1.2rem; }
+        .story-block p {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: 0.4s ease;
+            margin-top: auto;
+        }
+        .story-block:hover p {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .extra-tree { display: none; opacity: 0; transition: opacity 0.8s ease; }
+        .extra-tree.show { display: flex; opacity: 1; }
+
+        .btn-container { text-align: center; margin-top: 25px; }
+        .see-more-btn {
+            color: var(--mist-white);
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid rgba(197, 160, 89, 0.4);
+            padding: 10px 30px;
+            border-radius: 2px;
+            cursor: pointer;
+            background: transparent;
+            transition: 0.4s;
+        }
+        .see-more-btn:hover { background: var(--earth-gold); color: var(--deep-emerald); border-color: var(--earth-gold); }
+
+        /* --- Mission Section --- */
+        .mission-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .mission-card {
+            padding: 25px;
+            background: rgba(197, 160, 89, 0.05);
+            border-top: 2px solid var(--earth-gold);
+            text-align: center;
+        }
+        .mission-card h3 { font-family: 'Cinzel', serif; color: var(--earth-gold); margin-bottom: 10px; }
+        .mission-card p { font-size: 0.9rem; opacity: 0.9; transform: none; }
+
+        /* --- UPDATED Gallery Slideshow Styles --- */
+        .gallery-container {
+            position: relative;
+            max-width: 900px; /* Increased slightly for 3 items */
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .slideshow-wrapper {
+            display: flex;
+            /* Faster transition: 0.4s instead of 0.6s */
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .slide {
+            /* Now showing 3 slides at a time */
+            min-width: 33.333%;
+            height: 300px;
+            position: relative;
+            padding: 5px; /* Added slight gap between internal slides */
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .slide-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(6, 44, 29, 0.6);
+            color: var(--earth-gold);
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            z-index: 10;
+        }
+        .slide-nav:hover { background: var(--earth-gold); color: var(--deep-emerald); }
+        .prev { left: 0; border-radius: 0 5px 5px 0; }
+        .next { right: 0; border-radius: 5px 0 0 5px; }
+
+        .slide-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            background: rgba(197, 160, 89, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .dot.active { background: var(--earth-gold); transform: scale(1.3); }
+
+        /* --- Back to Top --- */
+        #backToTop { position: fixed; bottom: 30px; right: 30px; background: var(--earth-gold); width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; opacity: 0; transition: 0.5s; z-index: 1000; color: var(--deep-emerald); font-weight: bold; }
+        #backToTop.show { opacity: 1; }
+
+        /* --- Footer Styles --- */
+        footer {
+            background: #041a11;
+            padding: 80px 0 20px;
+            border-top: 1px solid rgba(197, 160, 89, 0.2);
+            font-family: 'Montserrat', sans-serif;
+        }
+        .footer-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 40px;
+            padding: 0 30px;
+        }
+        .footer-col h4 {
+            color: var(--earth-gold);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .footer-col h4::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--leaf-green);
+        }
+        .footer-col p, .footer-col ul {
+            font-size: 0.85rem;
+            color: rgba(244, 244, 244, 0.7);
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a {
+            color: inherit;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .footer-col ul li a:hover { color: var(--earth-gold); padding-left: 5px; }
+        .contact-info li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px !important;
+        }
+        .contact-info i { color: var(--earth-gold); margin-top: 4px; }
+        
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 60px auto 0;
+            padding: 20px 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(244, 244, 244, 0.5);
+        }
+        .footer-socials { display: flex; gap: 15px; }
+        .footer-socials a {
+            width: 35px;
+            height: 35px;
+            background: rgba(197, 160, 89, 0.1);
+            color: var(--earth-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: 0.4s;
+            text-decoration: none;
+        }
+        .footer-socials a:hover { background: var(--earth-gold); color: var(--deep-emerald); transform: translateY(-3px); }
+
+        @media (max-width: 992px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .slide { min-width: 50%; } /* Show 2 slides on tablets */
+        }
+        @media (max-width: 768px) {
+            .nav-links { position: fixed; top: 0; right: -100%; height: 100vh; width: 80%; background: var(--nav-bg); flex-direction: column; justify-content: center; align-items: center; transition: 0.5s; backdrop-filter: blur(20px); }
+            .nav-links.active { right: 0; }
+            .hamburger { display: block; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .footer-col h4::after { left: 50%; transform: translateX(-50%); }
+            .contact-info li { justify-content: center; }
+            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+            .slide { min-width: 100%; height: 350px; } /* Show 1 slide on mobile */
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }
+    </style>
+</head>
+<body>
+
+    <nav>
+<a href="http://archives.mbiseed.com/">
+  <img src="./photo/seed.jpeg" height="69" width="99" alt="Seed Image">
+</a>
+        <div class="hamburger" id="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="#">Home</a>
+            <a href="#about">Philosophy</a>
+            <a href="#trees">The Trees</a>
+            <a href="#gallery">Gallery</a>
+            <a href="#mission">Mission</a>
+        </div>
+    </nav>
+
+    <div id="backToTop">↑</div>
+
+    <section class="hero">
+        <p>A Mathrubhumi SEED Project</p>
+        <h1>The Soul of the Soil</h1>
+        <p>More than roots. More than leaves. Our Ancestors.</p>
+        <div style="margin-top:50px; color:var(--earth-gold); animation: bounce 2s infinite;">↓</div>
+    </section>
+
+    <div class="container">
+        <section class="reveal" id="about">
+            <h2>The Silent Witnesses</h2>
+            <div style="background: rgba(255,255,255,0.02); padding: 30px; border-left: 3px solid var(--earth-gold); font-style: italic; text-align: justify;">
+                "A tree does not just grow; it remembers. Every leaf on our campus carries the breath of students who studied here fifty years ago. They are the elders who hold the history of our institution in their rings."
+            </div>
+        </section>
+
+        <section class="reveal" id="trees">
+            <h2>Our Garden</h2>
+            <div class="search-container">
+                <input type="text" id="treeSearch" class="tree-search" placeholder="Search trees (e.g. Mango, Coffee)...">
+            </div>
+
+            <div class="tree-story" id="tree-container">
+                <div class="story-block">
+                    <img src="./photo/3.jpeg" class="tree-photo" alt="Urakkamthoongi Maram">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Samanea saman</span>
+                    <h3>Urakkamthoongi Maram</h3>
+                    <p>The Rain Tree is a giant shade tree known for its umbrella-shaped canopy and "sleepy" leaves that fold during rain or at night.</p>
+                </div>
+                <div class="story-block">
+                    <img src="./photo/5.jpeg" class="tree-photo" alt="Mavu">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Mangifera indica</span>
+                    <h3>Mavu</h3>
+                    <p>The Mango Tree is an evergreen known as the King of Fruits. It provides dense shade and can live for over 300 years.</p>
+                </div>
+                <div class="story-block">
+                    <img src="./photo/6.jpeg" class="tree-photo" alt="Guava">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Guva</span>
+                    <h3>Guva</h3>
+                    <p>A hardy tropical tree famous for its nutritious fruit and medicinal leaves, highly valued for health benefits.</p>
+                </div>
+                <div class="story-block">
+                    <img src="./photo/7.jpeg" class="tree-photo" alt="Nithyakalyani">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Catharanthus roseus</span>
+                    <h3>Nithyakalyani</h3>
+                    <p>The Madagascar Periwinkle is a beautiful flowering plant that blooms year-round and has significant medicinal properties.</p>
+                </div>
+
+                <div class="story-block extra-tree">
+                    <img src="./photo/8.jpeg" class="tree-photo" alt="Chikoo">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Manilkara zapota</span>
+                    <h3>Chikoo</h3>
+                    <p>Produces sweet, brown fruits with a grainy texture. This evergreen is a staple in tropical orchards.</p>
+                </div>
+                <div class="story-block extra-tree">
+                    <img src="./photo/9.jpeg" class="tree-photo" alt="Coffee">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Coffea arabica</span>
+                    <h3>Coffee</h3>
+                    <p>A glossy-leaved evergreen that thrives under the shade, producing the beans for our favorite morning brew.</p>
+                </div>
+                <div class="story-block extra-tree">
+                    <img src="./photo/2.jpeg" class="tree-photo" alt="Coconut">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Cocos nucifera</span>
+                    <h3>Coconut Tree</h3>
+                    <p>A tall palm widely cultivated in Kerala. It bears coconuts throughout the year and is the tree of life.</p>
+                </div>
+                <div class="story-block extra-tree">
+                    <img src="./photo/4.jpeg" class="tree-photo" alt="Jamun">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Syzygium cumini</span>
+                    <h3>Jamun</h3>
+                    <p>Jamun is a large evergreen tree native to India. It bears deep purple fruits with medicinal value.</p>
+                </div>
+                 <div class="story-block extra-tree">
+                    <img src="./photo/10.jpeg" class="tree-photo" alt="Sago Palm">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Cycas revoluta</span>
+                    <h3>Sago Palm</h3>
+                    <p>A slow-growing ornamental plant with a thick trunk and stiff, feather-like leaves arranged in a crown.</p>
+                </div>
+                 <div class="story-block extra-tree">
+                    <img src="./photo/24.jpeg" class="tree-photo" alt="Betham">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Terminalia catappa</span>
+                    <h3>Betham</h3>
+                    <p>A large tropical tree with almond-like seeds. Commonly planted for its expansive shade.</p>
+                </div>
+                <div class="story-block extra-tree">
+                    <img src="./photo/12.jpeg" class="tree-photo" alt="Lemon">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Citrus limon</span>
+                    <h3>Lemon</h3>
+                    <p>A small evergreen tree grown for its citrus fruit and medicinal properties.</p>
+                </div>
+                   <div class="story-block extra-tree">
+                    <img src="./photo/13.jpeg" class="tree-photo" alt="Henna">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Lawsonia inermis</span>
+                    <h3>Henna</h3>
+                    <p>Henna is a small shrub or tree with thin branches and small opposite leaves.
+Its leaves are used to make natural dye for body art and hair coloring.
+The plant is also known for its medicinal and cooling properties.</p>
+                </div>
+                   <div class="story-block extra-tree">
+                    <img src="./photo/14.jpeg" class="tree-photo" alt="Indian Cherry">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Muntingia calabura</span>
+                    <h3>Indian Cherry</h3>
+                    <p>Indian Cherry is a small to medium-sized fast-growing tree with serrated, alternate leaves.
+It produces small red edible fruits that are sweet and attractive to birds.
+The tree is commonly planted in schools and open areas for shade and quick growth.</p>
+                </div>
+                   <div class="story-block extra-tree">
+                    <img src="./photo/15.jpeg" class="tree-photo" alt="Peepal Tree">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Ficus religiosa</span>
+                    <h3>Peepal Tree</h3>
+                    <p>Peepal is a large deciduous tree with heart-shaped leaves and a long tapering tip.
+It is considered sacred in India and commonly found near schools, temples, and roadsides.
+The tree is known for its longevity, shade, and environmental importance.</p>
+                </div>
+                   <div class="story-block extra-tree">
+                    <img src="./photo/16.jpeg" class="tree-photo" alt="Indian Laurel">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Ficus microcarpa</span>
+                    <h3>Indian Laurel</h3>
+                    <p>Indian Laurel is a large evergreen fig tree with small, smooth, glossy leaves.
+It forms a dense canopy and is widely planted in campuses and public places for shade.
+Unlike the Banyan, it usually lacks prominent aerial roots.</p>
+                </div>
+                 <div class="story-block extra-tree">
+                    <img src="./photo/17.jpeg" class="tree-photo" alt="Gulmohar">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Delonix regia</span>
+                    <h3>Gulmohar</h3>
+                    <p>Gulmohar is a fast-growing ornamental tree with feathery bipinnate leaves.
+It is famous for its bright red flowers during summer.
+The tree provides light shade and is widely planted along roads and campuses.</p>
+                </div>
+                <div class="story-block extra-tree">
+                    <img src="./photo/18.jpeg" class="tree-photo" alt="Ashoka Tree">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Polyalthia longifolia</span>
+                    <h3>Ashoka Tree</h3>
+                    <p>Ashoka tree is a tall, evergreen ornamental tree with long, narrow, glossy leaves.
+It is commonly planted along roadsides and in campuses for its straight growth and dense foliage</p>
+                </div>
+                          <div class="story-block extra-tree">
+                    <img src="./photo/20.jpeg" class="tree-photo" alt="Alexandrian laurel">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Calophyllum inophyllum</span>
+                    <h3>Alexandrian laurel</h3>
+                    <p>Calophyllum inophyllum is an evergreen tree with thick, glossy, opposite leaves showing distinct parallel veins.
+It is commonly found in coastal and tropical regions of India and South Asia.
+The tree is valued for its medicinal oil, shade, and ornamental beauty.</p>
+                </div>
+                                      <div class="story-block extra-tree">
+                    <img src="./photo/21.jpeg" class="tree-photo" alt="Musa paradisiaca">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Banana plant</span>
+                    <h3>Musa paradisiaca</h3>
+                    <p>The banana plant is a large perennial herb with broad, elongated leaves and a false trunk made of tightly packed leaf bases.
+It grows rapidly in tropical climates and produces banana bunches after flowering.</p>
+                </div>
+                       <div class="story-block extra-tree">
+                    <img src="./photo/23.jpeg" class="tree-photo" alt="Koovalam">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Aegle marmelos</span>
+                    <h3>Koovalam</h3>
+                    <p>Koovalam is a sacred deciduous tree with trifoliate aromatic leaves.
+It is associated with Lord Shiva and widely grown in India.
+Its leaves and fruits are used in Ayurveda for digestive disorders.</p>
+                </div>
+ <div class="story-block extra-tree">
+       <img src="./photo/25.jpeg" class="tree-photo" alt="Teak">
+                    <span style="color: var(--leaf-green); font-size: 0.7rem; letter-spacing: 2px;">Tectona grandis</span>
+                    <h3>Teak</h3>
+                    <p>A single, straight, cylindrical trunk; the root system is typically superficial lateral roots and a taproot, but no aerial roots</p>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="see-more-btn" id="seeMoreTrees">See More Species</button>
+            </div>
+        </section>
+
+        <section class="reveal" id="mission">
+            <h2>Our Mission</h2>
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <h3>Conservation</h3>
+                    <p>Protecting existing flora and documenting biodiversity for future generations.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>Sustainability</h3>
+                    <p>Implementing eco-friendly practices and organic farming within the school.</p>
+                </div>
+                <div class="mission-card">
+                    <h3>Education</h3>
+                    <p>Creating awareness about the vital role trees play in our survival and history.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="reveal" id="gallery">
+            <h2>Gallery</h2>
+            
+            <div class="gallery-container">
+                <button class="slide-nav prev" id="prevSlide">❮</button>
+                <button class="slide-nav next" id="nextSlide">❯</button>
+                <div class="slideshow-wrapper" id="slideshow">
+                    <div class="slide"><img src="./photo/10.jpeg" alt="Campus 1"></div>
+                    <div class="slide"><img src="./photo/11.jpeg" alt="Campus 2"></div>
+                    <div class="slide"><img src="./photo/12.jpeg" alt="Campus 3"></div>
+                    <div class="slide"><img src="./photo/13.jpeg" alt="Campus 4"></div>
+                    <div class="slide"><img src="./photo/14.jpeg" alt="Campus 5"></div>
+                    <div class="slide"><img src="./photo/15.jpeg" alt="Campus 6"></div>
+                    <div class="slide"><img src="./photo/16.jpeg" alt="Campus 7"></div>
+                       <div class="slide"><img src="./photo/17.jpeg" alt="Campus 8"></div>
+                     
+                </div>
+            </div>
+            
+            <div class="slide-dots" id="slideDots">
+                </div>
+
+            <div class="btn-container" style="margin-top: 50px;">
+                <a href="gallery.html" class="see-more-btn">See Full Gallery</a>
+            </div>
+        </section>
+
+        <section class="reveal" id="location">
+            <h2>Our Location</h2>
+            <div style="width: 100%; height: 450px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(197, 160, 89, 0.3);">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6708.684803924297!2d76.102224!3d10.652619!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x4e7c6705fc1238b7!2sBLOOMING%20BUDS%20BETHANIA%20SENIOR%20SECONDARY%20SCHOOL!5e1!3m2!1sen!2sus!4v1616255625046!5m2!1sen!2sus" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                  <img src="./photo/bbb.jpeg" height="100" width="459">
+                <h4>Blooming Buds</h4>
+                <p style="text-align: justify; line-height: 1.6;">
+                    Blooming Buds Bethania Senior Secondary School is a premier educational institution under the Bethany Group. We aim to help students become self-reliant and develop a feeling of oneness and love for all human beings.
+                </p>
+                <div class="footer-socials" style="margin-top: 20px;">
+  <a href="https://www.facebook.com/BethaniaSchoolvellithiruthy/"><i class="fa fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/bloomingbudsmyschool_97/"><i class="fa fa-instagram"></i></a>
+                    <a href="https://www.youtube.com/channel/UCq5GD4iCdj9VoOokQxlekuQ"><i class="fa fa-youtube"></i></a>
+
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="gallery.html">Gallery</a></li>
+                    <li><a href="#trees">Trees</a></li>
+                    <li><a href="#mission">Missions</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Sister Schools</h4>
+                <ul>
+                    <li><a href="https://bethanystjohns.edu.in/">Bethany St. Johns</a></li>
+                    <li><a href="https://bethanyhs.in/">Bethany HSR</a></li>
+                    <li><a href="https://www.facebook.com/p/Bethany-St-Marys-English-Medium-Nursery-School-100063756347308/">Bethany St. Marys</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Quick Contact</h4>
+                <ul class="contact-info">
+                    <li><i class="fa fa-map-marker"></i> <span>Vellithiruthi, Kunnamkulam, Kerala 680604, India.</span></li>
+                    <li><i class="fa fa-envelope"></i> <span>principal.bbbethania@gmail.com</span></li>
+                    <li><i class="fa fa-phone"></i> <span>+91 62350 30033</span></li>
+                    <li><i class="fa fa-clock-o"></i> <span>Mon - Sat 9:30 - 15:30</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Blooming Buds Bethania. All rights reserved.</p>
+            <p>Designed by <a href="https://www.youtube.com/watch?v=YysL1dbxDHA" style="color: var(--leaf-green); text-decoration: none;">NAVANEETH R NAIR </a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Navigation Logic
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Search Logic
+        const searchInput = document.getElementById('treeSearch');
+        const treeCards = document.querySelectorAll('.story-block');
+        const seeMoreBtn = document.getElementById('seeMoreTrees');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            if (term.length > 0) {
+                seeMoreBtn.style.display = "none";
+                treeCards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    const scientific = card.querySelector('span').textContent.toLowerCase();
+                    card.style.display = (title.includes(term) || scientific.includes(term)) ? "flex" : "none";
+                });
+            } else {
+                seeMoreBtn.style.display = "inline-block";
+                resetTrees();
+            }
+        });
+
+        function resetTrees() {
+            treeCards.forEach((card, index) => {
+                if (index < 4) {
+                    card.style.display = "flex";
+                    card.classList.remove('extra-tree', 'show');
+                } else {
+                    card.style.display = "none";
+                    card.classList.add('extra-tree');
+                    card.classList.remove('show');
+                }
+            });
+            seeMoreBtn.textContent = "See More Species";
+        }
+
+        // Trees "See More" Logic
+        seeMoreBtn.addEventListener('click', () => {
+            const extraTrees = document.querySelectorAll('.extra-tree');
+            const isExpanding = seeMoreBtn.textContent === "See More Species";
+
+            extraTrees.forEach(tree => {
+                if (isExpanding) {
+                    tree.style.display = "flex";
+                    setTimeout(() => tree.classList.add('show'), 10);
+                } else {
+                    tree.classList.remove('show');
+                    tree.style.display = "none";
+                }
+            });
+            seeMoreBtn.textContent = isExpanding ? "Show Less" : "See More Species";
+        });
+
+        // --- UPDATED SLIDESHOW LOGIC (3 AT A TIME, FASTER) ---
+        const slideshow = document.getElementById('slideshow');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        const dotsContainer = document.getElementById('slideDots');
+        
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        // Determine how many slides to shift (showing 3 on desktop, 1 on mobile)
+        const getVisibleCount = () => window.innerWidth > 992 ? 3 : (window.innerWidth > 768 ? 2 : 1);
+
+        // Create Dots
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if(i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function updateSlides() {
+            const visible = getVisibleCount();
+            // Constraint: Don't scroll past the last set of images
+            if (currentSlide > totalSlides - visible) {
+                currentSlide = 0; 
+            }
+            
+            const offset = currentSlide * (100 / visible);
+            slideshow.style.transform = `translateX(-${offset}%)`;
+            
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() {
+            const visible = getVisibleCount();
+            currentSlide = (currentSlide + 1) > (totalSlides - visible) ? 0 : (currentSlide + 1);
+            updateSlides();
+        }
+
+        function prevSlide() {
+            const visible = getVisibleCount();
+            currentSlide = (currentSlide - 1 < 0) ? (totalSlides - visible) : (currentSlide - 1);
+            updateSlides();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // Faster Auto play: 3000ms instead of 5000ms
+        let slideInterval = setInterval(nextSlide, 3000);
+
+        [nextBtn, prevBtn, dotsContainer].forEach(el => {
+            el.addEventListener('mouseenter', () => clearInterval(slideInterval));
+            el.addEventListener('mouseleave', () => slideInterval = setInterval(nextSlide, 3000));
+        });
+
+        // Reveal & Scroll Logic
+        const btt = document.getElementById('backToTop');
+        window.onscroll = () => {
+            if (window.scrollY > 500) btt.classList.add('show');
+            else btt.classList.remove('show');
+            reveal();
+        };
+        btt.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+        function reveal() {
+            document.querySelectorAll(".reveal").forEach(el => {
+                if (el.getBoundingClientRect().top < window.innerHeight - 100) el.classList.add("active");
+            });
+        }
+        reveal();
+
+        // Re-calculate visible items on resize
+        window.addEventListener('resize', updateSlides);
+    </script>
+</body>
+</html>
